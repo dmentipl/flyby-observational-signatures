@@ -140,7 +140,7 @@ if RUN:
                         subprocess.run(
                             MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
                         )
-                        subprocess.run(['mv', f'data_{wavelength}', BETA_TIME_INC_DIR])
+                    shutil.move(f'data_{wavelength}', BETA_TIME_INC_DIR)
 
             # --- molecular emission --- #
 
@@ -181,7 +181,7 @@ if RUN:
                         subprocess.run(
                             MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
                         )
-                        subprocess.run(['mv', f'data_{wavelength}', BETA_TIME_INC_DIR])
+                    shutil.move(f'data_{molecule}', BETA_TIME_INC_DIR)
 
                     for file in glob.glob(r'*.tmp'):
-                        shutil.move(file, BETA_TIME_INC_DIR + '/data_th_' + molecule)
+                        shutil.move(file, BETA_TIME_INC_DIR / ('data_th_' + molecule))
