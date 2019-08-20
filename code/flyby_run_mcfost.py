@@ -108,7 +108,6 @@ if RUN:
                 print('')
 
                 BETA_TIME_INC_DIR = BETA_TIME_DIR / ('i' + inclination)
-                CWD = BETA_TIME_INC_DIR
 
                 for wavelength in WAVELENGTH:
 
@@ -141,6 +140,7 @@ if RUN:
                         subprocess.run(
                             MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
                         )
+                        subprocess.run(['mv', f'data_{wavelength}', BETA_TIME_INC_DIR])
 
             # --- molecular emission --- #
 
@@ -152,7 +152,6 @@ if RUN:
                 print('')
 
                 BETA_TIME_INC_DIR = BETA_TIME_DIR / ('i' + inclination)
-                CWD = BETA_TIME_INC_DIR
 
                 for molecule in MOLECULE:
 
@@ -182,6 +181,7 @@ if RUN:
                         subprocess.run(
                             MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
                         )
+                        subprocess.run(['mv', f'data_{wavelength}', BETA_TIME_INC_DIR])
 
                     for file in glob.glob(r'*.tmp'):
                         shutil.move(file, BETA_TIME_INC_DIR + '/data_th_' + molecule)
