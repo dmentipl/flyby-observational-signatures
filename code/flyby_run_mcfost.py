@@ -113,19 +113,17 @@ if RUN:
                 for wavelength in WAVELENGTH:
 
                     message = 'Calculating image at ' + wavelength + ' µm'
-                    print('  >>' + message + '  <<', flush=True)
+                    print('  >>  ' + message + '  <<', flush=True)
 
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + wavelength + '.log'
                     LOG_PATH = LOG_DIR / LOG_FILE
 
                     if float(wavelength) < 10.0:
                         PARA = 'flyby-scat-i' + inclination + '.para'
-                        CASA = ''
-                        IGNORE_DUST = '-ignore_dust'
+                        EXTRA_FLAG = '-ignore_dust'
                     else:
                         PARA = 'flyby-scat-i' + inclination + '.para'
-                        CASA = '-casa'
-                        IGNORE_DUST = ''
+                        EXTRA_FLAG = '-casa'
 
                     MCFOST_COMMAND = [
                         MCFOST,
@@ -136,8 +134,7 @@ if RUN:
                         LIMITS,
                         '-img',
                         wavelength,
-                        CASA,
-                        IGNORE_DUST,
+                        EXTRA_FLAG,
                     ]
 
                     with open(LOG_PATH, mode='w') as fp:
@@ -160,7 +157,7 @@ if RUN:
                 for molecule in MOLECULE:
 
                     message = 'Calculating ' + molecule + ' emission'
-                    print('  >>' + message + '  <<', flush=True)
+                    print('  >>  ' + message + '  <<', flush=True)
 
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + molecule + '.log'
                     LOG_PATH = LOG_DIR / LOG_FILE
