@@ -248,5 +248,6 @@ if RUN:
 
                     MOL_TH_DIR = BETA_TIME_INC_DIR / ('data_th_' + molecule)
                     MOL_TH_DIR.mkdir()
+                    shutil.move(str(CWD / 'data_th'), str(MOL_TH_DIR))
                     for file in glob.glob(str(CWD / r'*.tmp')):
                         shutil.move(file, str(MOL_TH_DIR))
