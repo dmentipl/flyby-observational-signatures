@@ -2,6 +2,32 @@
 """
 Run MCFOST on flyby models.
 
+The script creates a directory structure like:
+
+    .
+    ├── b1
+    │   ├── t1
+    │   │   ├── i1
+    │   │   │   ├── data_1
+    │   │   │   ├── data_2
+    │   │   ├── i2
+    │   │   │   ├── data_1
+    │   │   │   ├── data_2
+    :   :   :   :
+    :   :   :   :
+    :   :   :   :
+    ├── b2
+    │   ├── t1
+    │   │   ├── i1
+    │   │   │   ├── data_1
+    │   │   │   ├── data_2
+    │   │   ├── i2
+    │   │   │   ├── data_1
+    │   │   │   ├── data_2
+    :   :   :   :
+    :   :   :   :
+    :   :   :   :
+
 Daniel Mentiplay, 2018-2019.
 """
 
@@ -16,6 +42,8 @@ class MCFOSTError(Exception):
 
 
 # ---------------------------------------------------------------------------- #
+
+# SET PARAMETERS STARTING HERE -->
 
 SETUP = True
 RUN = True
@@ -35,6 +63,10 @@ TIME = ['100', '110', '120', '150']
 INCLINATION = ['00', '45', '90']
 WAVELENGTH = ['1.6', '850', '2100']
 MOLECULE = ['CO']
+
+MINIMUM_CASA_WAVELENGTH = 10.0
+
+# <-- STOP HERE
 
 # ---------------------------------------------------------------------------- #
 
@@ -100,7 +132,7 @@ if RUN:
 
             with open(LOG_PATH, mode='w') as fp:
                 print(
-                    '\nRunning command: '
+                    '\nMCFOST command: '
                     + f'{" ".join([str(_) for _ in MCFOST_COMMAND])}\n',
                     flush=True,
                 )
@@ -128,7 +160,7 @@ if RUN:
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + wavelength + '.log'
                     LOG_PATH = LOG_DIR / LOG_FILE
 
-                    if float(wavelength) < 10.0:
+                    if float(wavelength) < MINIMUM_CASA_WAVELENGTH:
                         PARA = 'flyby-scat-i' + inclination + '.para'
                         EXTRA_FLAG = '-ignore_dust'
                     else:
@@ -149,7 +181,7 @@ if RUN:
 
                     with open(LOG_PATH, mode='w') as fp:
                         print(
-                            '\nRunning command: '
+                            '\nMCFOST command: '
                             + f'{" ".join([str(_) for _ in MCFOST_COMMAND])}\n',
                             flush=True,
                         )
@@ -201,7 +233,7 @@ if RUN:
 
                     with open(LOG_PATH, mode='w') as fp:
                         print(
-                            '\nRunning command: '
+                            '\nMCFOST command: '
                             + f'{" ".join([str(_) for _ in MCFOST_COMMAND])}\n',
                             flush=True,
                         )
