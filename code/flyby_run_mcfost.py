@@ -10,6 +10,11 @@ import pathlib
 import shutil
 import subprocess
 
+
+class MCFOSTError(Exception):
+    pass
+
+
 # ---------------------------------------------------------------------------- #
 
 SETUP = True
@@ -94,7 +99,15 @@ if RUN:
             ]
 
             with open(LOG_PATH, mode='w') as fp:
-                subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
+                print(
+                    '\nRunning command: '
+                    + f'{" ".join([str(_) for _ in MCFOST_COMMAND])}\n',
+                    flush=True,
+                )
+                result = subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
+
+            if result.returncode != 0:
+                raise MCFOSTError('MCFOST returned non-zero error code')
 
             # --- thermal emission / scattered light --- #
 
@@ -135,8 +148,21 @@ if RUN:
                     ]
 
                     with open(LOG_PATH, mode='w') as fp:
-                        subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
+                        print(
+                            '\nRunning command: '
+                            + f'{" ".join([str(_) for _ in MCFOST_COMMAND])}\n',
+                            flush=True,
+                        )
+                        result = subprocess.run(
+                            MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
+                        )
+
+                    if result.returncode != 0:
+                        raise MCFOSTError('MCFOST returned non-zero error code')
+
                     shutil.move(str(CWD / f'data_{wavelength}'), str(BETA_TIME_INC_DIR))
+
+            shutil.move(str(CWD / 'data_th'), str(CWD / 'data_th_dust'))
 
             # --- molecular emission --- #
 
@@ -174,7 +200,18 @@ if RUN:
                     ]
 
                     with open(LOG_PATH, mode='w') as fp:
-                        subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
+                        print(
+                            '\nRunning command: '
+                            + f'{" ".join([str(_) for _ in MCFOST_COMMAND])}\n',
+                            flush=True,
+                        )
+                        result = subprocess.run(
+                            MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
+                        )
+
+                    if result.returncode != 0:
+                        raise MCFOSTError('MCFOST returned non-zero error code')
+
                     shutil.move(str(CWD / f'data_{molecule}'), str(BETA_TIME_INC_DIR))
 
                     MOL_TH_DIR = BETA_TIME_INC_DIR / ('data_th_' + molecule)
