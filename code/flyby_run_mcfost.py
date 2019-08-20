@@ -15,11 +15,12 @@ import subprocess
 SETUP = True
 RUN = True
 
-CONFIG_DIR = pathlib.Path('~/repos/flyby/config').expanduser()
+CONFIG_DIR = pathlib.Path('~/repos/flyby-project/config').expanduser()
 MCFOST_DIR = pathlib.Path('~/repos/mcfost').expanduser()
 DUMP_DIR = pathlib.Path('~/runs/flyby').expanduser()
 
 OUTPUT_DIR = DUMP_DIR / 'some_output_dir_name'
+LOG_DIR = OUTPUT_DIR / 'logs'
 
 LIMITS = CONFIG_DIR / 'flyby-limits'
 MCFOST = MCFOST_DIR / 'src' / 'mcfost'
@@ -35,7 +36,7 @@ MOLECULE = ['CO']
 if SETUP:
 
     OUTPUT_DIR.mkdir()
-    LOG_DIR = (OUTPUT_DIR / 'logs').mkdir()
+    LOG_DIR.mkdir()
 
     for beta in BETA:
         for time in TIME:
@@ -90,7 +91,10 @@ if RUN:
                 LIMITS,
             ]
 
-            subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=LOG_PATH, stderr=LOG_PATH)
+            with open(LOG_PATH, mode='w') as fp:
+                subprocess.run(
+                    MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
+                )
 
             # --- thermal emission / scattered light --- #
 
@@ -132,9 +136,10 @@ if RUN:
                         IGNORE_DUST,
                     ]
 
-                    subprocess.run(
-                        MCFOST_COMMAND, cwd=CWD, stdout=LOG_PATH, stderr=LOG_PATH
-                    )
+                    with open(LOG_PATH, mode='w') as fp:
+                        subprocess.run(
+                            MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
+                        )
 
             # --- molecular emission --- #
 
@@ -170,9 +175,10 @@ if RUN:
                         IGNORE_DUST,
                     ]
 
-                    subprocess.run(
-                        MCFOST_COMMAND, cwd=CWD, stdout=LOG_PATH, stderr=LOG_PATH
-                    )
+                    with open(LOG_PATH, mode='w') as fp:
+                        subprocess.run(
+                            MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
+                        )
 
                     for file in glob.glob(r'*.tmp'):
                         shutil.move(file, BETA_TIME_INC_DIR + '/data_th_' + molecule)
