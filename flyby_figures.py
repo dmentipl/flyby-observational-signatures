@@ -34,8 +34,9 @@ import os
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 import pymcfost as mcfost
-from pymcfost_subplots import OptionsImage, OptionsLine, plot_figure
+import pymcfost_subplots
 
 ################################################################################
 
@@ -62,47 +63,42 @@ SCATTERED = ['1.6']
 THERMAL = ['850', '2100']
 MOLECULAR = ['CO']
 
-opts_thermal = OptionsImage(
-    flux='I',
-    dynamic_range=None,
-    vmin=1e-07,
-    vmax=1e-04,
-    fpeak=None,
-    psf_FWHM=0.20,
-    plot_beam=True,
-    scale='log',
-    cmap='inferno',
-    coronagraph=None,
-    colorbar_subplot=False,
-    colorbar_figure=True,
-)
+COLORBAR_FIGURE = True
 
-opts_scattered = OptionsImage(
-    flux='I',
-    dynamic_range=None,
-    vmin=1e-19,
-    vmax=1e-16,
-    fpeak=None,
-    psf_FWHM=0.05,
-    plot_beam=True,
-    scale='log',
-    cmap='gist_heat',
-    coronagraph=None,
-    colorbar_subplot=False,
-    colorbar_figure=True,
-)
+OPTS_THERMAL = {
+    'type': 'I',
+    'dynamic_range': None,
+    'vmin': 1e-07,
+    'vmax': 1e-04,
+    'fpeak': None,
+    'psf_FWHM': 0.20,
+    'plot_beam': True,
+    'scale': 'log',
+    'cmap': 'inferno',
+    'coronagraph': None,
+}
 
-opts_molecular = OptionsLine(
-    # [M0, M1, M2]
-    fmin=[0, -2.5, 0],
-    fmax=[0.002, 2.5, 5],
-    psf_FWHM=[0.20, None, None],
-    plot_beam=[True, None, None],
-    color_scale=[None, None, None],
-    cmap=['Blues_r', 'RdBu', 'viridis'],
-    colorbar_subplot=[False, False, False],
-    colorbar_figure=[True, True, True],
-)
+OPTS_SCATTERED = {
+    'type': 'I',
+    'dynamic_range': None,
+    'vmin': 1e-19,
+    'vmax': 1e-16,
+    'fpeak': None,
+    'psf_FWHM': 0.05,
+    'plot_beam': False,
+    'scale': 'log',
+    'cmap': 'gist_heat',
+    'coronagraph': None,
+}
+
+OPTS_MOLECULAR = {  # [M0, M1, M2]
+    'fmin': [0, -2.5, 0],
+    'fmax': [0.002, 2.5, 5],
+    'psf_FWHM': [0.20, None, None],
+    'plot_beam': [True, None, None],
+    'color_scale': [None, None, None],
+    'cmap': ['Blues_r', 'RdBu', 'viridis'],
+}
 
 ################################################################################
 
@@ -118,9 +114,9 @@ if DO_LINES:
     radiations += MOLECULAR
 
 opts = {
-    'thermal': opts_thermal,
-    'scattered': opts_scattered,
-    'molecular': opts_molecular,
+    'thermal': OPTS_THERMAL,
+    'scattered': OPTS_SCATTERED,
+    'molecular': OPTS_MOLECULAR,
 }
 
 mpl.rcParams['font.family'] = 'serif'
@@ -141,11 +137,9 @@ for time in TIMES:
         for position in position_labels:
             text[time][inclination][position] = None
         if inclination == INCLINATIONS[0]:
-            text[time][inclination]['top_right'] = 't = ' + time
+            text[time][inclination]['top_right'] = f't = {(int(time)-100)*55} yr'
         if time == TIMES[0]:
-            text[time][inclination]['top_left'] = (
-                'i = ' + inclination + r'$\degree$'
-            )
+            text[time][inclination]['top_left'] = rf'i = {int(inclination)}$\degree$'
 
 for beta in BETAS:
 
@@ -168,43 +162,34 @@ for beta in BETAS:
             data = 'Line'
 
         else:
-            raise ValueError(
-                f'{radiation} not in thermal, scattered, molecular lists'
-            )
+            raise ValueError(f'{radiation} not in thermal, scattered, molecular lists')
 
-        images = dict()
+        pymcfost_objects = dict()
 
         for time in TIMES:
-            images[time] = dict()
+            pymcfost_objects[time] = dict()
 
             for inclination in INCLINATIONS:
                 data_directory = (
-                    'b'
-                    + beta
-                    + '/t'
-                    + time
-                    + '/i'
-                    + inclination
-                    + '/data_'
-                    + radiation
+                    'b' + beta + '/t' + time + '/i' + inclination + '/data_' + radiation
                 )
 
                 if data == 'Image':
-                    images[time][inclination] = mcfost.Image(data_directory)
+                    pymcfost_objects[time][inclination] = mcfost.Image(data_directory)
 
                 elif data == 'Line':
-                    images[time][inclination] = mcfost.Line(data_directory)
+                    pymcfost_objects[time][inclination] = mcfost.Line(data_directory)
 
-        options = opts[itype]
+        plotting_options = opts[itype]
 
         if data == 'Image':
 
-            figure, axes = plot_figure(
-                data=data,
-                images=images,
-                options=options,
+            figure, axes = pymcfost_subplots.plot_figure(
+                pymcfost_objects=pymcfost_objects,
+                plotting_options=plotting_options,
                 text=text,
                 positions=positions,
+                colorbar_figure=COLORBAR_FIGURE,
             )
 
             filename = itype + '_b' + beta + '_' + radiation + '.pdf'
@@ -217,24 +202,17 @@ for beta in BETAS:
             filenames = []
 
             for moment in MOMENTS:
-                figure, axes = plot_figure(
-                    data=data,
-                    images=images,
-                    options=options,
-                    moment=moment,
+                figure, axes = pymcfost_subplots.plot_figure(
+                    pymcfost_objects=pymcfost_objects,
+                    plotting_options=plotting_options,
                     text=text,
                     positions=positions,
+                    colorbar_figure=COLORBAR_FIGURE,
+                    moment=moment,
                 )
 
                 filename = (
-                    itype
-                    + '_b'
-                    + beta
-                    + '_'
-                    + radiation
-                    + '_m'
-                    + str(moment)
-                    + '.pdf'
+                    itype + '_b' + beta + '_' + radiation + '_m' + str(moment) + '.pdf'
                 )
                 figures.append(figure)
                 filenames.append(filename)
@@ -249,10 +227,7 @@ for beta in BETAS:
                     cmd = f'\\cp {filename} ~/Dropbox/swap'
                     try:
                         os.system(cmd)
-                        print(
-                            f'      copying {filename} to ~/Dropbox/swap',
-                            flush=True,
-                        )
+                        print(f'copying {filename} to ~/Dropbox/swap', flush=True)
                     except OSError:
                         print("Can't copy pdfs to ~/Dropbox/swap", flush=True)
 
