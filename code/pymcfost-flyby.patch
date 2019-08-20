@@ -1,0 +1,13 @@
+diff --git a/pymcfost/image.py b/pymcfost/image.py
+index 6ad7afe..dea322e 100644
+--- a/pymcfost/image.py
++++ b/pymcfost/image.py
+@@ -407,6 +407,8 @@ class Image:
+             )
+             ax.add_patch(mask)
+ 
++        self.unit = unit
++
+         # --- Return
+         return img
+ 
