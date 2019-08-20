@@ -1,6 +1,10 @@
 Flybys in protoplanetary discs - II. Observational signatures
 =============================================================
 
+The original paper is Cuello N., et al., 2019, MNRAS, [483](https://arxiv.org/abs/1812.00961), [4114](https://ui.adsabs.harvard.edu/abs/2019MNRAS.483.4114C/abstract).
+
+The manuscript is on [Overleaf](https://www.overleaf.com/project/5c37ccccfbc85849bdc86485).
+
 Phantom data
 ------------
 
