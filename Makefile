@@ -3,5 +3,5 @@
 figures:
 	make -C code figures
 
-figures:
+radiative-transfer:
 	make -C code radiative-transfer
