@@ -1,13 +1,11 @@
-'''
-pymcfost-subplots.py
-
-D. Mentiplay, 2018.
-
+"""
 Read a collection of mcfost models and plot images using pymcfost.
 
 This uses the pymcfost.Image and pymcfost.Line submodule
 (https://github.com/cpinte/pymcfost).
-'''
+
+Daniel Mentiplay, 2018-2019.
+"""
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt

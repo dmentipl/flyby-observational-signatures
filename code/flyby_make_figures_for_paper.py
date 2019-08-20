@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''
+"""
 Plot flyby model data from Cuello+2018.
 
 See https://arxiv.org/abs/1812.00961 for paper reference.
@@ -28,7 +28,7 @@ Assumes data directory structure in the current directory is:
     │   │   │   ├── data_2
 
 D. Mentiplay, 2018.
-'''
+"""
 
 import os
 import pathlib

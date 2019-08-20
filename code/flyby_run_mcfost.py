@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-'''
-flyby-mcfost.py
-D. Mentiplay, 2018.
-
+"""
 Run mcfost on flyby models.
-'''
+
+Daniel Mentiplay, 2018-2019.
+"""
 
 import glob
 import os
@@ -17,9 +16,7 @@ SETUP = True
 RUN = True
 
 PWD = os.path.dirname(os.path.abspath('__file__'))
-CONFIG_DIR = (
-    os.path.expandvars('$HOME') + '/repos/phd/projects/dusty-discs/flyby'
-)
+CONFIG_DIR = os.path.expandvars('$HOME') + '/repos/phd/projects/dusty-discs/flyby'
 MCFOST_DIR = os.path.expandvars('$MCFOST_DIR')
 DUMP_DIR = os.path.expandvars('$HOME') + '/runs/dusty-discs/flyby'
 
@@ -111,29 +108,16 @@ if RUN:
             for inclination in INCLINATION:
 
                 message = 'Inclination is ' + inclination + ' degrees'
-                print(
-                    3 * '\n' + '---- ' + message + ' ----' + 3 * '\n',
-                    flush=True,
-                )
+                print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
                 DIR_INC = ROOT_DIR + '/i' + inclination
 
                 for wavelength in WAVELENGTH:
 
                     message = 'Calculating image at ' + wavelength + ' µm'
-                    print(
-                        3 * '\n' + '---- ' + message + ' ----' + 3 * '\n',
-                        flush=True,
-                    )
+                    print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
-                    LOG_FILE = (
-                        DUMP_FILE
-                        + 'i'
-                        + inclination
-                        + '_'
-                        + wavelength
-                        + '.log'
-                    )
+                    LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + wavelength + '.log'
                     LOG = PWD + '/' + LOG_FILE
 
                     if float(wavelength) < 10.0:
@@ -174,24 +158,16 @@ if RUN:
             for inclination in INCLINATION:
 
                 message = 'Inclination is ' + inclination + ' degrees'
-                print(
-                    3 * '\n' + '---- ' + message + ' ----' + 3 * '\n',
-                    flush=True,
-                )
+                print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
                 DIR_INC = ROOT_DIR + '/i' + inclination
 
                 for molecule in MOLECULE:
 
                     message = 'Calculating ' + molecule + ' emission'
-                    print(
-                        3 * '\n' + '---- ' + message + ' ----' + 3 * '\n',
-                        flush=True,
-                    )
+                    print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
-                    LOG_FILE = (
-                        DUMP_FILE + 'i' + inclination + '_' + molecule + '.log'
-                    )
+                    LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + molecule + '.log'
                     LOG = PWD + '/' + LOG_FILE
 
                     PARA = 'flyby-alma-i' + inclination + '.para'

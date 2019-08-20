@@ -20,6 +20,14 @@ The files are:
 Radiative transfer
 ------------------
 
+To run MCFOST on the dust-stacked Phantom dumps:
+
+```
+make radiative-transfer
+```
+
+This may take a while (i.e. 1-2 hours).
+
 Figures
 -------
 
