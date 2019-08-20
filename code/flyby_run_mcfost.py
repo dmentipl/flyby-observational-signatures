@@ -94,9 +94,7 @@ if RUN:
             ]
 
             with open(LOG_PATH, mode='w') as fp:
-                subprocess.run(
-                    MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
-                )
+                subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
 
             # --- thermal emission / scattered light --- #
 
@@ -137,10 +135,8 @@ if RUN:
                     ]
 
                     with open(LOG_PATH, mode='w') as fp:
-                        subprocess.run(
-                            MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
-                        )
-                    shutil.move(f'data_{wavelength}', BETA_TIME_INC_DIR)
+                        subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
+                    shutil.move(str(CWD / f'data_{wavelength}'), str(BETA_TIME_INC_DIR))
 
             # --- molecular emission --- #
 
@@ -178,10 +174,10 @@ if RUN:
                     ]
 
                     with open(LOG_PATH, mode='w') as fp:
-                        subprocess.run(
-                            MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp
-                        )
-                    shutil.move(f'data_{molecule}', BETA_TIME_INC_DIR)
+                        subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=fp, stderr=fp)
+                    shutil.move(str(CWD / f'data_{molecule}'), str(BETA_TIME_INC_DIR))
 
-                    for file in glob.glob(r'*.tmp'):
-                        shutil.move(file, BETA_TIME_INC_DIR / ('data_th_' + molecule))
+                    MOL_TH_DIR = BETA_TIME_INC_DIR / ('data_th_' + molecule)
+                    MOL_TH_DIR.mkdir()
+                    for file in glob.glob(str(CWD / r'*.tmp')):
+                        shutil.move(file, str(MOL_TH_DIR))
