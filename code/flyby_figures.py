@@ -31,6 +31,7 @@ D. Mentiplay, 2018.
 '''
 
 import os
+import pathlib
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -43,6 +44,8 @@ import pymcfost_subplots
 ###############
 # SET OPTIONS #
 ###############
+
+ROOT_DATA_DIRECTORY = pathlib.Path('~/runs/flyby/2018-12-13').expanduser()
 
 DO_THERMAL = False  # plot thermal emission
 DO_SCATTERED = True  # plot scattered light
@@ -172,7 +175,7 @@ for beta in BETAS:
             pymcfost_objects[time] = dict()
 
             for inclination in INCLINATIONS:
-                data_directory = (
+                data_directory = ROOT_DATA_DIRECTORY / (
                     'b' + beta + '/t' + time + '/i' + inclination + '/data_' + radiation
                 )
 
