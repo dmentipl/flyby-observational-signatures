@@ -62,14 +62,14 @@ if RUN:
             DUMP_FILE = 'b' + beta + '-' + time + '_'
             DUMP_PATH = DUMP_DIR / DUMP_FILE
 
-            print('')
+            print('', flush=True)
             print('+' + 20 * '=' + '+', flush=True)
             print('|' + 20 * ' ' + '|', flush=True)
             print(f'|  DUMP = {DUMP_FILE:9}  |', flush=True)
             print('|' + 20 * ' ' + '|', flush=True)
             print('|' + 20 * ' ' + '|', flush=True)
             print('+' + 20 * '=' + '+', flush=True)
-            print('')
+            print('', flush=True)
 
             # --- temperature --- #
 
@@ -77,9 +77,9 @@ if RUN:
             PARA_PATH = CONFIG_DIR / PARA_FILE
 
             message = 'Calculating temperature'
-            print('')
+            print('', flush=True)
             print('---- ' + message + ' ----', flush=True)
-            print('')
+            print('', flush=True)
 
             LOG_FILE = DUMP_FILE + 'th.log'
             LOG_PATH = LOG_DIR / LOG_FILE
@@ -100,16 +100,16 @@ if RUN:
 
             for inclination in INCLINATION:
 
-                message = 'Inclination is ' + inclination + ' degrees'
-                print('')
+                message = f'Inclination is {inclination} degrees'
+                print('', flush=True)
                 print('---- ' + message + ' ----', flush=True)
-                print('')
+                print('', flush=True)
 
                 BETA_TIME_INC_DIR = BETA_TIME_DIR / ('i' + inclination)
 
                 for wavelength in WAVELENGTH:
 
-                    message = 'Calculating image at ' + wavelength + ' µm'
+                    message = f'Calculating image at {wavelength} µm'
                     print('  >>  ' + message + '  <<', flush=True)
 
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + wavelength + '.log'
@@ -142,16 +142,16 @@ if RUN:
 
             for inclination in INCLINATION:
 
-                message = 'Inclination is ' + inclination + ' degrees'
-                print('')
+                message = f'Inclination is {inclination} degrees'
+                print('', flush=True)
                 print('---- ' + message + ' ----', flush=True)
-                print('')
+                print('', flush=True)
 
                 BETA_TIME_INC_DIR = BETA_TIME_DIR / ('i' + inclination)
 
                 for molecule in MOLECULE:
 
-                    message = 'Calculating ' + molecule + ' emission'
+                    message = f'Calculating {molecule} emission'
                     print('  >>  ' + message + '  <<', flush=True)
 
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + molecule + '.log'
