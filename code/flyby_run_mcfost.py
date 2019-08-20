@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """
-Run mcfost on flyby models.
+Run MCFOST on flyby models.
 
 Daniel Mentiplay, 2018-2019.
 """
 
 import glob
-import os
+import pathlib
 import shutil
 import subprocess
 
@@ -15,13 +15,14 @@ import subprocess
 SETUP = True
 RUN = True
 
-PWD = os.path.dirname(os.path.abspath('__file__'))
-CONFIG_DIR = os.path.expandvars('$HOME') + '/repos/phd/projects/dusty-discs/flyby'
-MCFOST_DIR = os.path.expandvars('$MCFOST_DIR')
-DUMP_DIR = os.path.expandvars('$HOME') + '/runs/dusty-discs/flyby'
+CONFIG_DIR = pathlib.Path('~/repos/flyby/config').expanduser()
+MCFOST_DIR = pathlib.Path('~/repos/mcfost').expanduser()
+DUMP_DIR = pathlib.Path('~/runs/flyby').expanduser()
 
-LIMITS = PWD + '/flyby-limits'
-MCFOST = PWD + '/mcfost'
+OUTPUT_DIR = DUMP_DIR / 'some_output_dir_name'
+
+LIMITS = CONFIG_DIR / 'flyby-limits'
+MCFOST = MCFOST_DIR / 'src' / 'mcfost'
 
 BETA = ['45', '135']
 TIME = ['100', '110', '120', '150']
@@ -33,40 +34,32 @@ MOLECULE = ['CO']
 
 if SETUP:
 
-    shutil.copy2(CONFIG_DIR + '/flyby-limits', PWD)
-    shutil.copy2(MCFOST_DIR + '/src/mcfost', PWD)
-
-    for inclination in INCLINATION:
-        paras = [
-            CONFIG_DIR + '/flyby-temperature.para',
-            CONFIG_DIR + '/flyby-alma-i' + inclination + '.para',
-            CONFIG_DIR + '/flyby-scat-i' + inclination + '.para',
-        ]
-        for para in paras:
-            shutil.copy2(para, PWD)
+    OUTPUT_DIR.mkdir()
+    LOG_DIR = (OUTPUT_DIR / 'logs').mkdir()
 
     for beta in BETA:
         for time in TIME:
-
             for inclination in INCLINATION:
-                DIR = PWD + '/b' + beta + '/t' + time + '/i' + inclination
-                os.makedirs(DIR)
-
-            dump = DUMP_DIR + '/b' + beta + '-' + time + '_'
-            shutil.copy2(dump, PWD)
+                directory = (
+                    OUTPUT_DIR / ('b' + beta) / ('t' + time) / ('i' + inclination)
+                )
+                directory.mkdir(parents=True)
 
 # ---------------------------------------------------------------------------- #
 
 if RUN:
 
-    if not os.path.isfile(MCFOST):
+    if not MCFOST.exists():
         raise FileNotFoundError
 
     for beta in BETA:
         for time in TIME:
 
+            BETA_TIME_DIR = OUTPUT_DIR / ('b' + beta) / ('t' + time)
+            CWD = BETA_TIME_DIR
+
             DUMP_FILE = 'b' + beta + '-' + time + '_'
-            DUMP = DUMP_DIR + '/' + DUMP_FILE
+            DUMP_PATH = DUMP_DIR / DUMP_FILE
 
             print(3 * '\n')
             print('+' + 20 * '=' + '+', flush=True)
@@ -80,28 +73,24 @@ if RUN:
             # --- temperature --- #
 
             PARA_FILE = 'flyby-temperature.para'
-            PARA = PWD + '/' + PARA_FILE
+            PARA_PATH = CONFIG_DIR / PARA_FILE
 
             message = 'Calculating temperature'
             print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
             LOG_FILE = DUMP_FILE + 'th.log'
-            LOG = PWD + '/' + LOG_FILE
-            ROOT_DIR = 'b' + beta + '/t' + time
+            LOG_PATH = LOG_DIR / LOG_FILE
 
-            MCFOST_COMMAND = (
-                MCFOST
-                + ' '
-                + PARA
-                + ' -phantom '
-                + DUMP
-                + ' -limits '
-                + LIMITS
-                + ' | tee '
-                + LOG
-            )
+            MCFOST_COMMAND = [
+                MCFOST,
+                PARA_PATH,
+                '-phantom',
+                DUMP_PATH,
+                '-limits',
+                LIMITS,
+            ]
 
-            subprocess.run(MCFOST_COMMAND, shell=True)
+            subprocess.run(MCFOST_COMMAND, cwd=CWD, stdout=LOG_PATH, stderr=LOG_PATH)
 
             # --- thermal emission / scattered light --- #
 
@@ -110,7 +99,8 @@ if RUN:
                 message = 'Inclination is ' + inclination + ' degrees'
                 print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
-                DIR_INC = ROOT_DIR + '/i' + inclination
+                BETA_TIME_INC_DIR = BETA_TIME_DIR / ('i' + inclination)
+                CWD = BETA_TIME_INC_DIR
 
                 for wavelength in WAVELENGTH:
 
@@ -118,7 +108,7 @@ if RUN:
                     print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + wavelength + '.log'
-                    LOG = PWD + '/' + LOG_FILE
+                    LOG_PATH = LOG_DIR / LOG_FILE
 
                     if float(wavelength) < 10.0:
                         PARA = 'flyby-scat-i' + inclination + '.para'
@@ -129,29 +119,22 @@ if RUN:
                         CASA = '-casa'
                         IGNORE_DUST = ''
 
-                    MCFOST_COMMAND = (
-                        MCFOST
-                        + ' '
-                        + PARA
-                        + ' -phantom '
-                        + DUMP
-                        + ' -limits '
-                        + LIMITS
-                        + ' -img '
-                        + wavelength
-                        + ' '
-                        + CASA
-                        + ' '
-                        + IGNORE_DUST
-                        + ' | tee '
-                        + LOG
+                    MCFOST_COMMAND = [
+                        MCFOST,
+                        PARA_PATH,
+                        '-phantom',
+                        DUMP_PATH,
+                        '-limits',
+                        LIMITS,
+                        '-img',
+                        wavelength,
+                        CASA,
+                        IGNORE_DUST,
+                    ]
+
+                    subprocess.run(
+                        MCFOST_COMMAND, cwd=CWD, stdout=LOG_PATH, stderr=LOG_PATH
                     )
-
-                    subprocess.run(MCFOST_COMMAND, shell=True)
-
-                    shutil.move('data_' + wavelength, DIR_INC)
-
-            shutil.move('data_th', ROOT_DIR)
 
             # --- molecular emission --- #
 
@@ -160,7 +143,8 @@ if RUN:
                 message = 'Inclination is ' + inclination + ' degrees'
                 print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
-                DIR_INC = ROOT_DIR + '/i' + inclination
+                BETA_TIME_INC_DIR = BETA_TIME_DIR / ('i' + inclination)
+                CWD = BETA_TIME_INC_DIR
 
                 for molecule in MOLECULE:
 
@@ -168,32 +152,27 @@ if RUN:
                     print(3 * '\n' + '---- ' + message + ' ----' + 3 * '\n', flush=True)
 
                     LOG_FILE = DUMP_FILE + 'i' + inclination + '_' + molecule + '.log'
-                    LOG = PWD + '/' + LOG_FILE
+                    LOG_PATH = LOG_DIR / LOG_FILE
 
                     PARA = 'flyby-alma-i' + inclination + '.para'
                     CASA = '-casa'
                     IGNORE_DUST = '-ignore_dust'
 
-                    MCFOST_COMMAND = (
-                        MCFOST
-                        + ' '
-                        + PARA
-                        + ' -phantom '
-                        + DUMP
-                        + ' -limits '
-                        + LIMITS
-                        + ' -mol '
-                        + CASA
-                        + ' '
-                        + IGNORE_DUST
-                        + ' | tee '
-                        + LOG
+                    MCFOST_COMMAND = [
+                        MCFOST,
+                        PARA_PATH,
+                        '-phantom',
+                        DUMP_PATH,
+                        '-limits',
+                        LIMITS,
+                        '-mol',
+                        CASA,
+                        IGNORE_DUST,
+                    ]
+
+                    subprocess.run(
+                        MCFOST_COMMAND, cwd=CWD, stdout=LOG_PATH, stderr=LOG_PATH
                     )
 
-                    subprocess.run(MCFOST_COMMAND, shell=True)
-
-                    shutil.move('data_' + molecule, DIR_INC)
-                    shutil.move('data_th', DIR_INC + '/data_th_' + molecule)
-
                     for file in glob.glob(r'*.tmp'):
-                        shutil.move(file, DIR_INC + '/data_th_' + molecule)
+                        shutil.move(file, BETA_TIME_INC_DIR + '/data_th_' + molecule)
