@@ -44,9 +44,9 @@ import pymcfost_subplots
 # SET OPTIONS #
 ###############
 
-DO_THERMAL = True  # plot thermal emission
+DO_THERMAL = False  # plot thermal emission
 DO_SCATTERED = True  # plot scattered light
-DO_LINES = True  # plot CO emission
+DO_LINES = False  # plot CO emission
 
 SAVEFIG = True  # save figures to pdf
 DROPBOX = True  # cp files to dropbox
@@ -55,8 +55,8 @@ SCALE = 5.0  # figure size
 FONT_SCALING = 4.0  # font size
 
 BETAS = ['45', '135']  # angle of flyby
-TIMES = ['100', '110', '120', '150']  # time of flyby (100 is periastron)
-INCLINATIONS = ['00', '45', '90']  # inclination w.r.t. observer
+TIMES = ['100', '110', '120']  # time of flyby (100 is periastron)
+INCLINATIONS = ['00', '90']  # inclination w.r.t. observer
 MOMENTS = [0, 1, 2]  # molecular emission moments
 
 SCATTERED = ['1.6']
@@ -73,6 +73,7 @@ OPTS_THERMAL = {
     'fpeak': None,
     'psf_FWHM': 0.20,
     'plot_beam': True,
+    'per_beam': True,
     'scale': 'log',
     'cmap': 'inferno',
     'coronagraph': None,
@@ -81,11 +82,12 @@ OPTS_THERMAL = {
 OPTS_SCATTERED = {
     'type': 'I',
     'dynamic_range': None,
-    'vmin': 1e-19,
-    'vmax': 1e-16,
+    'vmin': 2e-18,
+    'vmax': 2e-15,
     'fpeak': None,
     'psf_FWHM': 0.05,
     'plot_beam': False,
+    'per_beam': True,
     'scale': 'log',
     'cmap': 'gist_heat',
     'coronagraph': None,
