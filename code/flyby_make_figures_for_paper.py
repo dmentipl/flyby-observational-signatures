@@ -55,7 +55,7 @@ SAVEFIG = True  # save figures to pdf
 DROPBOX = True  # cp files to dropbox
 
 SCALE = 5.0  # figure size
-FONT_SCALING = 4.0  # font size
+FONT_SCALING = 3.0  # font size
 
 BETAS = ['45', '135']  # angle of flyby
 TIMES = ['100', '110', '120']  # time of flyby (100 is periastron)
