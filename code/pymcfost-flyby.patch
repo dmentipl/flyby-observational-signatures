@@ -1,12 +1,36 @@
 diff --git a/pymcfost/image.py b/pymcfost/image.py
-index 6ad7afe..dea322e 100644
+index 6ad7afe..fc8281f 100644
 --- a/pymcfost/image.py
 +++ b/pymcfost/image.py
-@@ -407,6 +407,8 @@ class Image:
+@@ -407,6 +407,32 @@ class Image:
              )
              ax.add_patch(mask)
  
++        # Unit string should be an attribute
 +        self.unit = unit
++
++        # Add scale bar
++        scalebar = True
++        scalebar_in_au = 200
++        if scalebar:
++            scalebar_width = scalebar_in_au * self.pixelscale
++            posx = 2  # HACK
++            posy = -4  # HACK
++            offsetx = scalebar_width / 2
++            offsety = 0.5  # HACK
++            ax.plot(
++                (posx, posx + scalebar_width),
++                (posy, posy),
++                color='white',
++                linewidth=2.0,
++            )
++            ax.text(
++                posx + offsetx,
++                posy + offsety,
++                str(scalebar_in_au) + ' au',
++                horizontalalignment='center',
++                color='white',
++            )
 +
          # --- Return
          return img
