@@ -8,7 +8,9 @@ The manuscript is on [Overleaf](https://www.overleaf.com/project/5c37ccccfbc8584
 Phantom data
 ------------
 
-The Flyby simulation data is on `linuxbox` and `monashbox` computers in `~/runs/flyby`. The files are already stacked, with dust grains 0.1 mm, 1 mm, 1 cm, and 10 cm stacked onto the gas from the 0.1 mm calculation. We ignored the 1-fluid dust.
+The Flyby simulation data is on `monashbox` computer in `~/runs/flyby/2018-12-13/input`.
+
+The files are already stacked, with dust grains 0.1 mm, 1 mm, 1 cm, and 10 cm stacked onto the gas from the 0.1 mm calculation. We ignored the 1-fluid dust.
 
 The files are:
 
@@ -54,9 +56,9 @@ This will put the MCFOST output in `~/runs/flyby/...`.
     │   │   │   ├── data_2
 ```
 
-*NOTE*: This may take a while (i.e. 1-2 hours).
+*Note*: This may take a while (i.e. several hours).
 
-Question: what Phantom version...?
+**MCFOST version used**: `e875a9434e4e3dfd3cbfd86563b012065cfcd205`
 
 Figures
 -------
