@@ -45,7 +45,7 @@ import pymcfost_subplots
 # SET OPTIONS #
 ###############
 
-ROOT_DATA_DIRECTORY = pathlib.Path('~/runs/flyby/2018-12-13').expanduser()
+ROOT_DATA_DIRECTORY = pathlib.Path('~/runs/flyby/2018-12-13/output').expanduser()
 
 DO_THERMAL = False  # plot thermal emission
 DO_SCATTERED = True  # plot scattered light
@@ -55,7 +55,7 @@ SAVEFIG = True  # save figures to pdf
 DROPBOX = True  # cp files to dropbox
 
 SCALE = 5.0  # figure size
-FONT_SCALING = 4.0  # font size
+FONT_SCALING = 3.0  # font size
 
 BETAS = ['45', '135']  # angle of flyby
 TIMES = ['100', '110', '120']  # time of flyby (100 is periastron)
@@ -89,7 +89,7 @@ OPTS_SCATTERED = {
     'vmax': 2e-15,
     'fpeak': None,
     'psf_FWHM': 0.05,
-    'plot_beam': False,
+    'plot_beam': True,
     'per_beam': True,
     'scale': 'log',
     'cmap': 'gist_heat',
@@ -104,6 +104,13 @@ OPTS_MOLECULAR = {  # [M0, M1, M2]
     'color_scale': [None, None, None],
     'cmap': ['Blues_r', 'RdBu', 'viridis'],
 }
+
+
+def format_strings(beta, time, incl):
+    time_string = f't = {(int(time)-100)*55} yr'
+    incl_beta_string = rf'i = {int(incl)}$\degree$, $\beta$ = {int(beta)}$\degree$'
+    return time_string, incl_beta_string
+
 
 ########################################################################################
 
@@ -134,21 +141,23 @@ positions['top_right'] = (0.95, 0.90)
 positions['bottom_left'] = (0.05, 0.10)
 positions['bottom_right'] = (0.95, 0.10)
 
-text = dict()
-for time in TIMES:
-    text[time] = dict()
-    for inclination in INCLINATIONS:
-        text[time][inclination] = dict()
-        for position in position_labels:
-            text[time][inclination][position] = None
-        if inclination == INCLINATIONS[0]:
-            text[time][inclination]['top_right'] = f't = {(int(time)-100)*55} yr'
-        if time == TIMES[0]:
-            text[time][inclination]['top_left'] = rf'i = {int(inclination)}$\degree$'
-
 for beta in BETAS:
 
     print(f'=== beta = {beta} ===', flush=True)
+
+    text = dict()
+    for time in TIMES:
+        text[time] = dict()
+        for inclination in INCLINATIONS:
+            text[time][inclination] = dict()
+            for position in position_labels:
+                text[time][inclination][position] = None
+            text[time][inclination]['top_left'] = format_strings(
+                beta, time, inclination
+            )[0]
+            text[time][inclination]['top_right'] = format_strings(
+                beta, time, inclination
+            )[1]
 
     for radiation in radiations:
 
